@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Predicción de Temperatura Crítica</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <main class="container">
+        <section class="header">
+            <h1>Predicción de Temperatura Crítica de Superconductores</h1>
+
+            <p>
+                Este sistema utiliza un modelo de regresión para estimar la variable
+                <strong>critical_temp</strong>, que representa la temperatura crítica de un
+                material superconductor en Kelvin (K).
+            </p>
+
+            <p>
+                Ingresa los valores originales de las variables del dataset.
+                No ingreses valores escalados, componentes principales ni datos transformados.
+                El sistema aplicará internamente imputación, escalado, PCA y predicción.
+            </p>
+        </section>
+
+        {% if errors %}
+            <section class="error-box">
+                <h2>Errores encontrados</h2>
+                <ul>
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        {% endif %}
+
+        {% if prediction is not none %}
+            <section class="result-box">
+                <h2>Resultado de la predicción</h2>
+                <p>
+                    Temperatura crítica estimada:
+                    <strong>{{ prediction }} {{ target_unit }}</strong>
+                </p>
+            </section>
+        {% endif %}
+
+        <form method="POST" class="form-card">
+            <h2>Formulario de entrada</h2>
+
+            <p class="form-help">
+                Los campos muestran nombres descriptivos para facilitar la captura.
+                Debajo de cada campo se conserva el nombre original de la variable del dataset.
+            </p>
+
+            <div class="grid">
+                {% for feature in feature_names %}
+                    <div class="field">
+                        <label for="{{ feature }}">
+                            {{ field_labels.get(feature, feature) }}
+                        </label>
+
+                        <input
+                            type="text"
+                            id="{{ feature }}"
+                            name="{{ feature }}"
+                            value="{{ values.get(feature, '') }}"
+                            placeholder="Ingresa un valor numérico"
+                        >
+
+                        <small>
+                            {{ field_descriptions.get(feature, 'Variable numérica original del dataset.') }}
+                        </small>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit">Realizar predicción</button>
+        </form>
+    </main>
+</body>
+</html>
